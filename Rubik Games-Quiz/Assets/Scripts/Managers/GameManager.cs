@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
     private void CheckNumbers()
     {
         List<GameObject> emptyOrWrongTrays = new();
-        int maxNumMistakeCount = 2;
+        int maxNumMistakeCount = 1;
         isCorrectNumber = true;
         foreach (var t in trays)
         {

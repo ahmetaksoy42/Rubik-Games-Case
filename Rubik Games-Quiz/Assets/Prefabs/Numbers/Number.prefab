@@ -250,7 +250,7 @@ GameObject:
   - component: {fileID: 7783580935822197687}
   - component: {fileID: -2907987675304734725}
   m_Layer: 0
-  m_Name: Numbers
+  m_Name: Number
   m_TagString: Number
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -349,3 +349,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   number: 0
+  defParent: {fileID: 0}
+  startPos: {x: 0, y: 0, z: 0}

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private RadialController radialController;
     private GameManager gameManager;
     private UIManager uiManager;
-    public int Level { get; private set; } = 1;
+    public int Level { get; private set; } = 4;
     private void Awake()
     {
         Instance = this;
@@ -24,7 +25,16 @@ public class LevelManager : MonoBehaviour
         {
             p.SetActive(false);
         }
-        //StartNextLevel();
+    }
+    public void RestartGame()
+    {
+        Level = 1;
+        uiManager.CloseFinishPanel();
+        foreach (var p in gameManager.placementPoints)
+        {
+            p.SetActive(false);
+        }
+        StartCoroutine(radialController.FillTheTrays(2));
     }
     public IEnumerator FinishLevel()
     {
@@ -49,6 +59,7 @@ public class LevelManager : MonoBehaviour
     }
     private void StartNextLevel()
     {
+        uiManager.image.SetActive(false);
         int trayCount;
         Level++;
         switch (Level)
@@ -63,10 +74,23 @@ public class LevelManager : MonoBehaviour
                 StartCoroutine(radialController.FillTheTrays(trayCount));
                 
                 break;
-            case >= 3:
+            case 3:
                 trayCount = 4;
                 StartCoroutine(radialController.FillTheTrays(trayCount));
                 
+                break;
+            case 4:
+                trayCount = 4;
+                StartCoroutine(radialController.FillTheTrays(trayCount));
+
+                break;
+            case 5:
+                trayCount = 4;
+                StartCoroutine(radialController.FillTheTrays(trayCount));
+
+                break;
+            case 6:
+                uiManager.OpenFinishPanel();
                 break;
         }
     }
