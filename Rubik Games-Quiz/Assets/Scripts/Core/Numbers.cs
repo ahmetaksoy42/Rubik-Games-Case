@@ -30,7 +30,6 @@ public class Numbers : MonoBehaviour, IDraggable
     }
     public void OnMouseDrag()
     {
-        //transform.position = MouseWorldPos() + offset;
         transform.position = new Vector3(MouseWorldPos().x + offset.x,Mathf.Clamp((MouseWorldPos().y + offset.y),minY,maxY), Mathf.Clamp((MouseWorldPos().z + offset.z), minZ, maxZ)); // y eksenini sýnýrla
     }
     public void OnMouseUp()
@@ -99,7 +98,6 @@ public class Numbers : MonoBehaviour, IDraggable
                     otherNum.SetParent(defParent);
                     transform.SetParent(nextTray);
                 }
-                //transform.DOMove(startPos, 1);
             }
             else
             {
@@ -107,7 +105,6 @@ public class Numbers : MonoBehaviour, IDraggable
                 yield return new WaitForSeconds(duration);
                 transform.SetParent(nextTray);
             }
-            //yield return new WaitForSeconds(1);
         }
         transform.GetComponent<Collider>().enabled = true;
         inTrayPos = transform.position; // bir tray e girdiyse pozisyonu switch için kaydet

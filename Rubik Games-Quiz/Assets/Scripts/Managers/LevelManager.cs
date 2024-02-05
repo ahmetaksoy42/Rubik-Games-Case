@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private RadialController radialController;
     private GameManager gameManager;
     private UIManager uiManager;
-    public int Level { get; private set; } = 4;
+    public int Level { get; private set; } = 1;
     private void Awake()
     {
         Instance = this;

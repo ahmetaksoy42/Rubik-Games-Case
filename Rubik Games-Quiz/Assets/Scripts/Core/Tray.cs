@@ -26,8 +26,6 @@ public class Tray : MonoBehaviour, IDraggable
     {
         var yPos = transform.position.y;
         var zPos = transform.position.z;
-        //transform.position = MouseWorldPos() + offset;
-        //transform.position = new Vector3(MouseWorldPos().x + offset.x, yPos, zPos);
         transform.position = new Vector3(Mathf.Clamp((MouseWorldPos().x + offset.x), minX, maxX),yPos,zPos);
     }
     public void OnMouseUp()
@@ -41,28 +39,6 @@ public class Tray : MonoBehaviour, IDraggable
         var mouseScreenPos = Input.mousePosition;
         mouseScreenPos.z = Camera.main.WorldToScreenPoint(transform.position).z;
         return Camera.main.ScreenToWorldPoint(mouseScreenPos);
-    }
-    private Transform CheckAviablePoint(Transform tepsi) // düzenlemek lazým kullanýlýnca tam çalýþmýyor
-    {
-        float minDistance = Mathf.Infinity;
-        Transform nearestPoint = null;
-
-        foreach (var point in GameManager.Instance.placementPoints)
-        {
-            if (point.transform.childCount > 0) // Dolu ise atla
-            {
-                continue;
-            }
-
-            float distance = Vector3.Distance(tepsi.position, point.transform.position);
-
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearestPoint = point.transform;
-            }
-        }
-        return nearestPoint;
     }
     private Transform FindClosestPoint()
     {
@@ -125,7 +101,6 @@ public class Tray : MonoBehaviour, IDraggable
             else
             {
                 transform.parent = nearestPoint;
-                //transform.position = nearestPoint.position;
                 transform.DOMove(nearestPoint.position, duration);
             }
         }

@@ -8,17 +8,16 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public GameObject[] placementPoints;
-    public GameObject[] trays;
-    public GameObject[] numbers;
+    [SerializeField] private ParticleSystem confettiParticle;
     private bool isCorrectSorting;
     private bool isCorrectNumber;
     private float duration = 1f;
     private float strength = 0.1f;
     private int mistakeSortCount = 0;
     private int mistakeNumberCount = 0;
-    //public List<GameObject> placementTransformsList = new();
-
+    public GameObject[] placementPoints;
+    public GameObject[] trays;
+    public GameObject[] numbers;
     private void Awake()
     {
         Instance = this;
@@ -52,7 +51,7 @@ public class GameManager : MonoBehaviour
             if (trays[i].transform.parent != placementPoints[i].transform)
             {
                 falseTrays.Add(trays[i]);
-                //isCorrectSorting = false; // bir tanesi bile yanlýþ ise false olsun.
+                //isCorrectSorting = false;
                 //trays[i].transform.DOShakePosition(duration, strength);
             }
         }
@@ -79,9 +78,7 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 0; i < trays.Length; i++) // oyun sonu için
             {
-                //trays[i].transform.position = placementPoints[i].transform.position;
                 trays[i].transform.DOJump(placementPoints[i].transform.position, 2, 1, duration);
-                //trays[i].transform.DOMove(placementPoints[i].transform.position,duration);
                 StartCoroutine(SetParent(trays[i], placementPoints[i]));
             }
         }
@@ -100,11 +97,13 @@ public class GameManager : MonoBehaviour
                 if (number.GetComponent<Numbers>().number != tray.GetComponent<Tray>().cakeAmount)
                 {
                     isCorrectNumber = false;
-                    mistakeNumberCount++;
+                    //mistakeNumberCount++;
                     emptyOrWrongTrays.Add(t);
                 }
                 else
-                    isCorrectNumber = true;
+                {
+                    //isCorrectNumber = true;
+                }
             }
             else
             {
@@ -116,35 +115,36 @@ public class GameManager : MonoBehaviour
         {
             mistakeNumberCount++;
             Debug.Log(emptyOrWrongTrays.Count);
-        }
-        if (mistakeNumberCount == maxNumMistakeCount)
-        {
-            float duration = 1f;
-            float trayOffset = 1.2f;
-            foreach (var t in emptyOrWrongTrays)
+            if (mistakeNumberCount == maxNumMistakeCount)
             {
-                if (t.transform.childCount > 1) // sayý yanlýþ ise ilk önce onu yerine gönder
+                float duration = 1f;
+                float trayOffset = 1.2f;
+                foreach (var t in emptyOrWrongTrays)
                 {
-                    var otherNum = t.GetComponentInChildren<Numbers>();
+                    Debug.Log(t.transform.childCount);
+                    if (t.transform.childCount > 1) // sayý yanlýþ ise ilk önce onu yerine gönder
+                    {
+                        var otherNum = t.GetComponentInChildren<Numbers>();
+                        otherNum.transform.DOMove(otherNum.startPos, duration);
+                        otherNum.transform.SetParent(otherNum.defParent);
 
-                    otherNum.transform.DOMove(otherNum.startPos, duration);
-                    otherNum.transform.SetParent(otherNum.defParent);
-
+                    }
+                    GameObject numberObject = numbers.FirstOrDefault(n => n.GetComponent<Numbers>().number == t.GetComponent<Tray>().cakeAmount && n.transform.parent.tag != Consts.Tags.TRAY_TAG);
+                    Vector3 nextPoint = new Vector3(t.transform.position.x, t.transform.position.y, t.transform.position.z - trayOffset);
+                    // ayný kek sayýsýna sahip tepsi varsa oluþan bug
+                    numberObject.transform.DOMove(nextPoint, duration);
+                    numberObject.transform.parent = t.transform;
                 }
-                GameObject numberObject = numbers.FirstOrDefault(n => n.GetComponent<Numbers>().number == t.GetComponent<Tray>().cakeAmount && n.transform.parent.tag != Consts.Tags.TRAY_TAG);
-                Vector3 nextPoint = new Vector3(t.transform.position.x, t.transform.position.y, t.transform.position.z - trayOffset);
-                // ayný kek sayýsýna sahip tepsi varsa oluþan bug
-                numberObject.transform.DOMove(nextPoint, duration);
-                numberObject.transform.parent = t.transform;
             }
         }
+        
     }
     private IEnumerator SetParent(GameObject childObj, GameObject parentObj)
     {
         yield return new WaitForSeconds(duration);
         childObj.transform.SetParent(parentObj.transform);
     }
-    public void CheckFinish() // numaralar 2.de geliyor, tepsiler 3de deðiþiyor. Eðer sýralama doðruysa sayýlar tekde geliyor
+    public void CheckFinish()
     {
         CheckSorting();
         CheckNumbers();
@@ -155,6 +155,7 @@ public class GameManager : MonoBehaviour
             mistakeNumberCount = 0;
             mistakeSortCount = 0;
             StartCoroutine(LevelManager.Instance.FinishLevel());
+            confettiParticle.Play();
         }
     }
 }
